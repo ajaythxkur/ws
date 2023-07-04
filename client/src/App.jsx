@@ -57,6 +57,30 @@ function App() {
     }
     let acc = await window.martian.account();
     setAccount(acc)
+    let id = await window.martian.getChainId();
+    console.log(id);
+    // if(id.chainId !== 1){
+    //   console.log("Changing network to mainnet")
+    //   const networks = await window.martian.getNetworks();
+    //   const nodeUrl = networks["Mainnet"][0];
+    //   const status = await window.martian.changeNetwork(nodeUrl);
+    //   console.log(status)
+    // }
+
+    //generate & submit transaction
+    // Create a transaction
+const sender = acc.address;
+const payload = {
+    function: "0x1::coin::transfer",
+    type_arguments: ["0x1::aptos_coin::AptosCoin"],
+    arguments: ["0xb522a7531a57af66863038d18bfdeb3bb83bdcb33fe6d14cdd3a0d6af5f28e6d", 5000]
+};
+const transaction = await window.martian.generateTransaction(sender, payload);
+const txnHash = await window.martian.signAndSubmitTransaction(transaction);
+console.log(txnHash)
+// Fetch transaction details
+const data = await window.martian.getTransaction(txnHash);
+console.log(data.success)
   }
   async function disconnect(){
     let isconn = await window.martian.isConnected();
